@@ -307,7 +307,7 @@ async function loadTransactions(){
  list.innerHTML=data.map(t=>{
    const date=new Date(t.created_at).toLocaleString('en-NG');
    return `<div style="padding:10px 0;border-bottom:1px solid #e5eee7">
-     <b>Goal contribution</b>
+     <b>${t.transaction_type === 'goal_withdrawal' ? 'Goal withdrawal' : 'Goal contribution'}</b>
      <div class="green">₦${Number(t.amount).toLocaleString('en-NG')}</div>
      <small>${escapeHTML(t.status)} · ${escapeHTML(date)}</small>
    </div>`;
