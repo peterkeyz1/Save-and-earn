@@ -322,7 +322,19 @@ async function loadTransactions(){
  if(error){
    list.textContent='Could not load transaction history: '+error.message;
    return;
- }
+ }const totalDeposits = data
+  .filter(t => t.transaction_type === 'goal_contribution')
+  .reduce((sum,t) => sum + Number(t.amount), 0);
+
+const totalWithdrawals = data
+  .filter(t => t.transaction_type === 'goal_withdrawal')
+  .reduce((sum,t) => sum + Number(t.amount), 0);
+
+document.getElementById('totalDeposits').textContent =
+  '₦' + totalDeposits.toLocaleString('en-NG');
+
+document.getElementById('totalWithdrawals').textContent =
+  '₦' + totalWithdrawals.toLocaleString('en-NG');
  if(!data||data.length===0){
    list.textContent='No contributions recorded yet.';
    return;
