@@ -231,6 +231,8 @@ async function loadGoals(){
    </div>
    <input id="contribution-${g.id}" type="number" min="1" step="0.01" placeholder="Amount to add in Naira">
    <button class="full" onclick="addContribution('${g.id}')">Add money to this goal</button>
+   <input id="withdrawal-${g.id}" type="number" min="1" step="0.01" placeholder="Amount to withdraw in Naira">
+<button class="full" onclick="withdrawFromGoal('${g.id}')">Withdraw money</button>
    </div>`;
  }).join('')||'<div class="card">No savings goals yet. Create your first goal above.</div>';
  await loadTransactions();
