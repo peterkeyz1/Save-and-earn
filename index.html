@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#063b2b">
+<title>Save and Earn</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f8f5;color:#172c22;font-family:Arial,sans-serif}
+header{background:#063b2b;color:white;padding:24px 20px 30px;border-radius:0 0 25px 25px}
+.brand{font-size:22px;font-weight:bold;color:#b9f34a}
+header p{color:#d0e5d9;font-size:14px}
+.balance{margin-top:25px;font-size:13px;color:#d0e5d9}
+.amount{font-size:32px;font-weight:bold;margin:9px 0}
+main{padding:18px;max-width:600px;margin:auto}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:-5px}
+.action{background:white;border-radius:13px;padding:17px 5px;text-align:center;font-size:12px;box-shadow:0 2px 9px #0000000c}
+.action b{display:block;font-size:22px;margin-bottom:8px;color:#08744c}
+h3{margin-top:28px}
+.card{background:white;padding:18px;border-radius:15px;margin:12px 0;box-shadow:0 2px 9px #0000000b}
+input{width:100%;padding:13px;border:1px solid #d6e2da;border-radius:9px;margin:8px 0;font-size:15px}
+button{background:#0b754b;color:white;border:0;padding:13px 17px;border-radius:9px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
+.green{color:#08744c}
+.progress{height:9px;background:#e4eee7;border-radius:10px;margin:12px 0}
+.bar{height:9px;background:#9bdc38;border-radius:10px;width:0%}
+nav{position:sticky;bottom:0;background:white;display:flex;justify-content:space-around;padding:14px 3px;border-top:1px solid #e5ece7}
+nav button{background:white;color:#345447;padding:9px 5px;font-size:12px}
+section{display:none}
+section.active{display:block}
+small{color:#73877b}
+footer{text-align:center;padding:20px;color:#829187;font-size:11px}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">✦ SAVE AND EARN</div>
+<p>Build your wealth, one step at a time.</p>
+<div class="balance">TOTAL SAVINGS BALANCE</div>
+<div class="amount" id="balance">₦0.00</div>
+<small style="color:#d0e5d9">Welcome to your financial future</small>
+</header>
+
+<main>
+<section id="home" class="active">
+<div class="actions">
+<div class="action" onclick="show('save')"><b>＋</b>Save money</div>
+<div class="action" onclick="show('goals')"><b>◎</b>Goals</div>
+<div class="action" onclick="show('invest')"><b>↗</b>Invest</div>
+</div>
+<h3>My Overview</h3>
+<div class="card">
+<small>Total money saved</small>
+<h2 class="green" id="overview">₦0.00</h2>
+<small>Across your savings activities</small>
+</div>
+<div class="card">
+<b>My Savings Goals</b>
+<div id="homeGoals"><p><small>No savings goals yet.</small></p></div>
+<button onclick="show('goals')">View goals</button>
+</div>
+<div class="card">
+<b>Grow your money</b>
+<p><small>Explore investment opportunities and learn about potential returns.</small></p>
+<button onclick="show('invest')">Explore investments</button>
+</div>
+</section>
+
+<section id="save">
+<h3>Save Money</h3>
+<div class="card">
+<p>Deposit into your demo savings balance.</p>
+<input id="deposit" type="number" min="1" placeholder="Amount in Naira">
+<button onclick="addMoney()">Add savings</button>
+<p><small>This is a demonstration. No real money is transferred.</small></p>
+</div>
+</section>
+
+<section id="goals">
+<h3>My Savings Goals</h3>
+<div class="card">
+<input id="goalName" placeholder="Goal name">
+<input id="goalTarget" type="number" min="1" placeholder="Target amount (₦)">
+<button onclick="createGoal()">Create savings goal</button>
+</div>
+<div id="goalList"></div>
+</section>
+
+<section id="invest">
+<h3>Investment Centre</h3>
+<div class="card">
+<h3 class="green">Mutual Funds</h3>
+<p>Explore professionally managed investment funds.</p>
+<p><small>Returns are not guaranteed. Investment involves risk.</small></p>
+<button onclick="alert('Investment services are not connected yet. This is a demo.')">Explore funds</button>
+</div>
+<div class="card">
+<h3>Important information</h3>
+<p><small>Live investments will require a properly licensed investment partner and secure backend integration.</small></p>
+</div>
+</section>
+
+<section id="account">
+<h3>My Account</h3>
+<div class="card">
+<b>Save and Earn</b>
+<p>Account type: Demo user</p>
+<p>Currency: Nigerian Naira (₦)</p>
+<p><small>Your demo data is stored on this device only.</small></p>
+<button onclick="resetApp()">Reset demo data</button>
+</div>
+</section>
+</main>
+
+<nav>
+<button onclick="show('home')">⌂<br>Home</button>
+<button onclick="show('save')">＋<br>Save</button>
+<button onclick="show('goals')">◎<br>Goals</button>
+<button onclick="show('invest')">↗<br>Invest</button>
+<button onclick="show('account')">☻<br>Account</button>
+</nav>
+<footer>© 2026 Save and Earn. Build your future.</footer>
+
+<script>
+let balance=Number(localStorage.getItem('sae_balance')||0);
+let goals=JSON.parse(localStorage.getItem('sae_goals')||'[]');
+
+function money(n){
+return '₦'+Number(n).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function update(){
+document.getElementById('balance').textContent=money(balance);
+document.getElementById('overview').textContent=money(balance);
+localStorage.setItem('sae_balance',balance);
+renderGoals();
+}
+function show(id){
+document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+function addMoney(){
+let n=Number(document.getElementById('deposit').value);
+if(!Number.isFinite(n)||n<=0){alert('Enter a valid amount');return;}
+balance+=n;
+document.getElementById('deposit').value='';
+update();
+alert('Demo savings added successfully!');
+}
+function createGoal(){
+let name=document.getElementById('goalName').value.trim();
+let target=Number(document.getElementById('goalTarget').value);
+if(!name||!Number.isFinite(target)||target<=0){alert('Enter a goal name and valid target');return;}
+goals.push({name,target,saved:0});
+localStorage.setItem('sae_goals',JSON.stringify(goals));
+document.getElementById('goalName').value='';
+document.getElementById('goalTarget').value='';
+renderGoals();
+}
+function contribute(i){
+let n=Number(prompt('How much would you like to contribute?'));
+if(!Number.isFinite(n)||n<=0||n>balance){alert('Enter a valid amount within your available demo balance');return;}
+let remaining=goals[i].target-goals[i].saved;
+if(n>remaining){alert('Amount exceeds the remaining goal target');return;}
+balance-=n;
+goals[i].saved+=n;
+localStorage.setItem('sae_goals',JSON.stringify(goals));
+update();
+}
+function renderGoals(){
+let html='';
+goals.forEach((g,i)=>{
+let pct=Math.min(100,g.saved/g.target*100);
+html+=`<div class="card"><b>${escapeHTML(g.name)}</b>
+<h3>${money(g.saved)} / ${money(g.target)}</h3>
+<div class="progress"><div class="bar" style="width:${pct}%"></div></div>
+<small>${pct.toFixed(1)}% completed</small><br><br>
+<button onclick="contribute(${i})" ${pct>=100?'disabled':''}>Add to goal</button></div>`;
+});
+document.getElementById('goalList').innerHTML=html||'<p>No goals created yet.</p>';
+document.getElementById('homeGoals').innerHTML=goals.length?goals.map(g=>'<p>'+escapeHTML(g.name)+' — '+money(g.saved)+'</p>').join(''):'<p><small>No savings goals yet.</small></p>';
+}
+function escapeHTML(s){
+return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function resetApp(){
+if(confirm('Delete all demo savings and goals on this device?')){
+balance=0;goals=[];
+localStorage.removeItem('sae_balance');
+localStorage.removeItem('sae_goals');
+update();
+}
+}
+update();
+</script>
+</body>
+</html>
