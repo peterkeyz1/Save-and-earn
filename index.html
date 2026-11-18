@@ -261,7 +261,34 @@ async function addContribution(goalId){
  alert('Contribution recorded! Your new saved balance is ₦'+Number(data).toLocaleString('en-NG')+'.');
  await loadGoals();
 }
+async function withdrawFromGoal(goalId){
+ const input=document.getElementById('withdrawal-'+goalId);
+ const amount=Number(input.value);
 
+ if(!Number.isFinite(amount)||amount<=0){
+   alert('Enter a withdrawal amount greater than zero.');
+   return;
+ }
+
+ if(!currentUser){
+   alert('Please log in again before withdrawing.');
+   return;
+ }
+
+ const {data,error}=await db.rpc('withdraw_from_savings_goal',{
+   p_goal_id:goalId,
+   p_amount:amount
+ });
+
+ if(error){
+   alert('Could not record withdrawal: '+error.message);
+   return;
+ }
+
+ input.value='';
+ alert('Withdrawal recorded! Your remaining balance is ₦'+Number(data).toLocaleString('en-NG')+'.');
+ await loadGoals();
+}
 async function loadTransactions(){
  if(!currentUser)return;
  const list=document.getElementById('transactionList');
