@@ -53,6 +53,24 @@ section.active{display:block}
 
 <section id="home">
 <h2>My Dashboard</h2>
+  <div class="grid">
+  <div class="card">
+    <small>TOTAL SAVINGS</small>
+    <h2 class="green" id="totalSavings">₦0</h2>
+  </div>
+  <div class="card">
+    <small>TOTAL DEPOSITS</small>
+    <h2 class="green" id="totalDeposits">₦0</h2>
+  </div>
+  <div class="card">
+    <small>TOTAL WITHDRAWALS</small>
+    <h2 class="green" id="totalWithdrawals">₦0</h2>
+  </div>
+  <div class="card">
+    <small>ACTIVE GOALS</small>
+    <h2 class="green" id="activeGoals">0</h2>
+  </div>
+</div>
 <div class="card">
 <small>ACCOUNT STATUS</small>
 <h2 class="green">Active user</h2>
@@ -215,7 +233,12 @@ async function loadGoals(){
  }
 
  document.getElementById('goalCount').textContent=data.length;
+const totalSavings = data.reduce((sum,g)=>sum+Number(g.saved_amount),0);
 
+document.getElementById('totalSavings').textContent =
+'₦'+totalSavings.toLocaleString('en-NG');
+
+document.getElementById('activeGoals').textContent = data.length;
  const list=document.getElementById('goalList');
 
  list.innerHTML=data.map(g=>{
