@@ -245,10 +245,13 @@ document.getElementById('activeGoals').textContent = data.length;
    const saved=Number(g.saved_amount);
    const target=Number(g.target_amount);
    const percent=Math.min(100,saved/target*100);
+   const percent=Math.min(100,saved/target*100);
    return `<div class="card">
    <b>${escapeHTML(g.goal_name)}</b>
    <h3 class="green">₦${saved.toLocaleString('en-NG')} / ₦${target.toLocaleString('en-NG')}</h3>
    <p><small>${percent.toFixed(1)}% completed</small></p>
+<p><small>₦${remaining.toLocaleString('en-NG')} remaining</small></p>
+${completed ? '<p class="green"><b>🎉 Congratulations! Savings goal completed!</b></p>' : ''}
    <div style="height:8px;background:#e5eee7;border-radius:8px;overflow:hidden">
    <div style="height:8px;background:#9bdc38;width:${percent}%"></div>
    </div>
