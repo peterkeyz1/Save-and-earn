@@ -38,7 +38,6 @@ section.active{display:block}
 </header>
 
 <main>
-
 <section id="auth" class="active">
 <div class="card">
 <h2 id="authTitle">Create your account</h2>
@@ -81,6 +80,10 @@ section.active{display:block}
 <div id="goalMessage" class="status hidden"></div>
 </div>
 <div id="goalList"></div>
+<div class="card">
+<h3>Contribution history</h3>
+<div id="transactionList"><small>Your recorded contributions will appear here.</small></div>
+</div>
 </section>
 
 <section id="account">
@@ -95,7 +98,6 @@ section.active{display:block}
 <button class="full" onclick="logout()">Logout</button>
 </div>
 </section>
-
 </main>
 
 <nav id="navigation" class="hidden">
@@ -226,8 +228,61 @@ async function loadGoals(){
    <p><small>${percent.toFixed(1)}% completed</small></p>
    <div style="height:8px;background:#e5eee7;border-radius:8px;overflow:hidden">
    <div style="height:8px;background:#9bdc38;width:${percent}%"></div>
-   </div></div>`;
+   </div>
+   <input id="contribution-${g.id}" type="number" min="1" step="0.01" placeholder="Amount to add in Naira">
+   <button class="full" onclick="addContribution('${g.id}')">Add money to this goal</button>
+   </div>`;
  }).join('')||'<div class="card">No savings goals yet. Create your first goal above.</div>';
+ await loadTransactions();
+}
+
+async function addContribution(goalId){
+ const input=document.getElementById('contribution-'+goalId);
+ const amount=Number(input.value);
+ if(!Number.isFinite(amount)||amount<=0){
+   alert('Enter a contribution amount greater than zero.');
+   return;
+ }
+ if(!currentUser){
+   alert('Please log in again before adding a contribution.');
+   return;
+ }
+ const {data,error}=await db.rpc('add_to_savings_goal',{
+   p_goal_id:goalId,
+   p_amount:amount
+ });
+ if(error){
+   alert('Could not record contribution: '+error.message);
+   return;
+ }
+ input.value='';
+ alert('Contribution recorded! Your new saved balance is ₦'+Number(data).toLocaleString('en-NG')+'.');
+ await loadGoals();
+}
+
+async function loadTransactions(){
+ if(!currentUser)return;
+ const list=document.getElementById('transactionList');
+ if(!list)return;
+ const {data,error}=await db.from('transactions')
+   .select('transaction_type,amount,status,created_at')
+   .order('created_at',{ascending:false}).limit(20);
+ if(error){
+   list.textContent='Could not load transaction history: '+error.message;
+   return;
+ }
+ if(!data||data.length===0){
+   list.textContent='No contributions recorded yet.';
+   return;
+ }
+ list.innerHTML=data.map(t=>{
+   const date=new Date(t.created_at).toLocaleString('en-NG');
+   return `<div style="padding:10px 0;border-bottom:1px solid #e5eee7">
+     <b>Goal contribution</b>
+     <div class="green">₦${Number(t.amount).toLocaleString('en-NG')}</div>
+     <small>${escapeHTML(t.status)} · ${escapeHTML(date)}</small>
+   </div>`;
+ }).join('');
 }
 
 function escapeHTML(value){
