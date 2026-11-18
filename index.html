@@ -3,196 +3,286 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#063b2b">
 <title>Save and Earn</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f4f8f5;color:#172c22;font-family:Arial,sans-serif}
-header{background:#063b2b;color:white;padding:24px 20px 30px;border-radius:0 0 25px 25px}
-.brand{font-size:22px;font-weight:bold;color:#b9f34a}
-header p{color:#d0e5d9;font-size:14px}
-.balance{margin-top:25px;font-size:13px;color:#d0e5d9}
-.amount{font-size:32px;font-weight:bold;margin:9px 0}
-main{padding:18px;max-width:600px;margin:auto}
-.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:-5px}
-.action{background:white;border-radius:13px;padding:17px 5px;text-align:center;font-size:12px;box-shadow:0 2px 9px #0000000c}
-.action b{display:block;font-size:22px;margin-bottom:8px;color:#08744c}
-h3{margin-top:28px}
-.card{background:white;padding:18px;border-radius:15px;margin:12px 0;box-shadow:0 2px 9px #0000000b}
-input{width:100%;padding:13px;border:1px solid #d6e2da;border-radius:9px;margin:8px 0;font-size:15px}
-button{background:#0b754b;color:white;border:0;padding:13px 17px;border-radius:9px;font-weight:bold;cursor:pointer}
+body{margin:0;background:#f2f7f3;color:#193329;font-family:Arial,sans-serif}
+header{background:#063b2b;color:white;padding:25px 20px;border-radius:0 0 25px 25px}
+.brand{font-size:23px;font-weight:bold;color:#b9f34a}
+header p{color:#c9dfd3}
+main{max-width:600px;margin:auto;padding:18px}
+.card{background:white;padding:19px;border-radius:15px;margin:15px 0;box-shadow:0 3px 12px #0000000b}
+input{width:100%;padding:14px;border:1px solid #d5e1d9;border-radius:9px;margin:8px 0;font-size:15px}
+button{background:#08754b;color:white;border:0;border-radius:9px;padding:13px 17px;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5}
-.green{color:#08744c}
-.progress{height:9px;background:#e4eee7;border-radius:10px;margin:12px 0}
-.bar{height:9px;background:#9bdc38;border-radius:10px;width:0%}
-nav{position:sticky;bottom:0;background:white;display:flex;justify-content:space-around;padding:14px 3px;border-top:1px solid #e5ece7}
+.secondary{background:#e8f2eb;color:#075b3d}
+.full{width:100%;margin-top:8px}
+.hidden{display:none!important}
+.green{color:#08754b}
+small{color:#72847a}
+nav{position:sticky;bottom:0;background:white;display:flex;justify-content:space-around;padding:12px 2px;border-top:1px solid #ddd}
 nav button{background:white;color:#345447;padding:9px 5px;font-size:12px}
 section{display:none}
 section.active{display:block}
-small{color:#73877b}
-footer{text-align:center;padding:20px;color:#829187;font-size:11px}
+.status{padding:12px;border-radius:9px;background:#e9f4ec;font-size:13px;margin:10px 0}
 </style>
 </head>
 <body>
+
 <header>
 <div class="brand">✦ SAVE AND EARN</div>
 <p>Build your wealth, one step at a time.</p>
-<div class="balance">TOTAL SAVINGS BALANCE</div>
-<div class="amount" id="balance">₦0.00</div>
-<small style="color:#d0e5d9">Welcome to your financial future</small>
+<div id="welcome">Your financial future starts here.</div>
 </header>
 
 <main>
-<section id="home" class="active">
-<div class="actions">
-<div class="action" onclick="show('save')"><b>＋</b>Save money</div>
-<div class="action" onclick="show('goals')"><b>◎</b>Goals</div>
-<div class="action" onclick="show('invest')"><b>↗</b>Invest</div>
-</div>
-<h3>My Overview</h3>
+
+<section id="auth" class="active">
 <div class="card">
-<small>Total money saved</small>
-<h2 class="green" id="overview">₦0.00</h2>
-<small>Across your savings activities</small>
-</div>
-<div class="card">
-<b>My Savings Goals</b>
-<div id="homeGoals"><p><small>No savings goals yet.</small></p></div>
-<button onclick="show('goals')">View goals</button>
-</div>
-<div class="card">
-<b>Grow your money</b>
-<p><small>Explore investment opportunities and learn about potential returns.</small></p>
-<button onclick="show('invest')">Explore investments</button>
+<h2 id="authTitle">Create your account</h2>
+<p><small>Join Save and Earn today.</small></p>
+<input id="fullName" placeholder="Full name">
+<input id="email" type="email" placeholder="Email address">
+<input id="password" type="password" placeholder="Password (minimum 8 characters)">
+<button class="full" id="authButton" onclick="authenticate()">Create account</button>
+<button class="full secondary" id="switchButton" onclick="switchAuth()">Already registered? Login</button>
+<div id="message" class="status hidden"></div>
 </div>
 </section>
 
-<section id="save">
-<h3>Save Money</h3>
+<section id="home">
+<h2>My Dashboard</h2>
 <div class="card">
-<p>Deposit into your demo savings balance.</p>
-<input id="deposit" type="number" min="1" placeholder="Amount in Naira">
-<button onclick="addMoney()">Add savings</button>
-<p><small>This is a demonstration. No real money is transferred.</small></p>
+<small>ACCOUNT STATUS</small>
+<h2 class="green">Active user</h2>
+<div id="userEmail"></div>
+</div>
+<div class="card">
+<small>MY SAVINGS GOALS</small>
+<h2 id="goalCount">0</h2>
+<p><small>Goals created in your account</small></p>
+<button onclick="show('goals')">Manage my goals</button>
+</div>
+<div class="card">
+<h3>Welcome to Save and Earn</h3>
+<p>Your savings journey starts with a clear goal.</p>
+<button onclick="show('goals')">Create a goal</button>
 </div>
 </section>
 
 <section id="goals">
-<h3>My Savings Goals</h3>
+<h2>My Savings Goals</h2>
 <div class="card">
-<input id="goalName" placeholder="Goal name">
-<input id="goalTarget" type="number" min="1" placeholder="Target amount (₦)">
-<button onclick="createGoal()">Create savings goal</button>
+<input id="goalName" placeholder="What are you saving for?">
+<input id="goalTarget" type="number" min="1" placeholder="Target amount in Naira">
+<button class="full" onclick="createGoal()">Create savings goal</button>
+<div id="goalMessage" class="status hidden"></div>
 </div>
 <div id="goalList"></div>
 </section>
 
-<section id="invest">
-<h3>Investment Centre</h3>
+<section id="account">
+<h2>My Account</h2>
 <div class="card">
-<h3 class="green">Mutual Funds</h3>
-<p>Explore professionally managed investment funds.</p>
-<p><small>Returns are not guaranteed. Investment involves risk.</small></p>
-<button onclick="alert('Investment services are not connected yet. This is a demo.')">Explore funds</button>
-</div>
-<div class="card">
-<h3>Important information</h3>
-<p><small>Live investments will require a properly licensed investment partner and secure backend integration.</small></p>
+<p><b>Full name</b></p>
+<p id="accountName">-</p>
+<p><b>Email</b></p>
+<p id="accountEmail">-</p>
+<p><b>Platform</b></p>
+<p>Save and Earn</p>
+<button class="full" onclick="logout()">Logout</button>
 </div>
 </section>
 
-<section id="account">
-<h3>My Account</h3>
-<div class="card">
-<b>Save and Earn</b>
-<p>Account type: Demo user</p>
-<p>Currency: Nigerian Naira (₦)</p>
-<p><small>Your demo data is stored on this device only.</small></p>
-<button onclick="resetApp()">Reset demo data</button>
-</div>
-</section>
 </main>
 
-<nav>
+<nav id="navigation" class="hidden">
 <button onclick="show('home')">⌂<br>Home</button>
-<button onclick="show('save')">＋<br>Save</button>
 <button onclick="show('goals')">◎<br>Goals</button>
-<button onclick="show('invest')">↗<br>Invest</button>
 <button onclick="show('account')">☻<br>Account</button>
 </nav>
-<footer>© 2026 Save and Earn. Build your future.</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-let balance=Number(localStorage.getItem('sae_balance')||0);
-let goals=JSON.parse(localStorage.getItem('sae_goals')||'[]');
+const SUPABASE_URL = 'https://fkfhmoojvdtfmmbuvaxj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_PR46gKYx5cUgHSLqmY8q0g_GveODoNk';
 
-function money(n){
-return '₦'+Number(n).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-function update(){
-document.getElementById('balance').textContent=money(balance);
-document.getElementById('overview').textContent=money(balance);
-localStorage.setItem('sae_balance',balance);
-renderGoals();
-}
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let currentUser = null;
+let loginMode = false;
+
 function show(id){
-document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
-document.getElementById(id).classList.add('active');
+ document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
 }
-function addMoney(){
-let n=Number(document.getElementById('deposit').value);
-if(!Number.isFinite(n)||n<=0){alert('Enter a valid amount');return;}
-balance+=n;
-document.getElementById('deposit').value='';
-update();
-alert('Demo savings added successfully!');
+
+function message(text){
+ const el=document.getElementById('message');
+ el.textContent=text;
+ el.classList.remove('hidden');
 }
-function createGoal(){
-let name=document.getElementById('goalName').value.trim();
-let target=Number(document.getElementById('goalTarget').value);
-if(!name||!Number.isFinite(target)||target<=0){alert('Enter a goal name and valid target');return;}
-goals.push({name,target,saved:0});
-localStorage.setItem('sae_goals',JSON.stringify(goals));
-document.getElementById('goalName').value='';
-document.getElementById('goalTarget').value='';
-renderGoals();
+
+function switchAuth(){
+ loginMode=!loginMode;
+ document.getElementById('authTitle').textContent=loginMode?'Welcome back':'Create your account';
+ document.getElementById('fullName').classList.toggle('hidden',loginMode);
+ document.getElementById('authButton').textContent=loginMode?'Login':'Create account';
+ document.getElementById('switchButton').textContent=loginMode?'New here? Create account':'Already registered? Login';
+ document.getElementById('message').classList.add('hidden');
 }
-function contribute(i){
-let n=Number(prompt('How much would you like to contribute?'));
-if(!Number.isFinite(n)||n<=0||n>balance){alert('Enter a valid amount within your available demo balance');return;}
-let remaining=goals[i].target-goals[i].saved;
-if(n>remaining){alert('Amount exceeds the remaining goal target');return;}
-balance-=n;
-goals[i].saved+=n;
-localStorage.setItem('sae_goals',JSON.stringify(goals));
-update();
+
+async function authenticate(){
+ const email=document.getElementById('email').value.trim();
+ const password=document.getElementById('password').value;
+ const name=document.getElementById('fullName').value.trim();
+
+ if(!email||password.length<8){
+   message('Enter a valid email and a password of at least 8 characters.');
+   return;
+ }
+
+ const btn=document.getElementById('authButton');
+ btn.disabled=true;
+
+ try{
+   let result;
+
+   if(loginMode){
+     result=await db.auth.signInWithPassword({email,password});
+   }else{
+     if(!name){
+       message('Please enter your full name.');
+       return;
+     }
+     result=await db.auth.signUp({
+       email,password,
+       options:{data:{full_name:name}}
+     });
+   }
+
+   if(result.error) throw result.error;
+
+   if(!loginMode && !result.data.session){
+     message('Registration successful! Check your email to confirm your account, then log in.');
+   }else{
+     await loadUser();
+   }
+ }catch(error){
+   message(error.message);
+ }finally{
+   btn.disabled=false;
+ }
 }
-function renderGoals(){
-let html='';
-goals.forEach((g,i)=>{
-let pct=Math.min(100,g.saved/g.target*100);
-html+=`<div class="card"><b>${escapeHTML(g.name)}</b>
-<h3>${money(g.saved)} / ${money(g.target)}</h3>
-<div class="progress"><div class="bar" style="width:${pct}%"></div></div>
-<small>${pct.toFixed(1)}% completed</small><br><br>
-<button onclick="contribute(${i})" ${pct>=100?'disabled':''}>Add to goal</button></div>`;
+
+async function loadUser(){
+ const {data,error}=await db.auth.getUser();
+ if(error||!data.user) return;
+
+ currentUser=data.user;
+ const name=currentUser.user_metadata.full_name||'Member';
+
+ document.getElementById('welcome').textContent='Welcome, '+name;
+ document.getElementById('userEmail').textContent=currentUser.email;
+ document.getElementById('accountName').textContent=name;
+ document.getElementById('accountEmail').textContent=currentUser.email;
+
+ document.getElementById('auth').classList.add('hidden');
+ document.getElementById('navigation').classList.remove('hidden');
+
+ show('home');
+ await loadGoals();
+}
+
+async function loadGoals(){
+ if(!currentUser)return;
+
+ const {data,error}=await db
+   .from('savings_goals')
+   .select('id,goal_name,target_amount,saved_amount')
+   .order('created_at',{ascending:false});
+
+ if(error){
+   alert('Could not load goals: '+error.message);
+   return;
+ }
+
+ document.getElementById('goalCount').textContent=data.length;
+
+ const list=document.getElementById('goalList');
+
+ list.innerHTML=data.map(g=>{
+   const saved=Number(g.saved_amount);
+   const target=Number(g.target_amount);
+   const percent=Math.min(100,saved/target*100);
+   return `<div class="card">
+   <b>${escapeHTML(g.goal_name)}</b>
+   <h3 class="green">₦${saved.toLocaleString('en-NG')} / ₦${target.toLocaleString('en-NG')}</h3>
+   <p><small>${percent.toFixed(1)}% completed</small></p>
+   <div style="height:8px;background:#e5eee7;border-radius:8px;overflow:hidden">
+   <div style="height:8px;background:#9bdc38;width:${percent}%"></div>
+   </div></div>`;
+ }).join('')||'<div class="card">No savings goals yet. Create your first goal above.</div>';
+}
+
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ }[c]));
+}
+
+async function createGoal(){
+ const name=document.getElementById('goalName').value.trim();
+ const target=Number(document.getElementById('goalTarget').value);
+ const msg=document.getElementById('goalMessage');
+
+ if(!name||!Number.isFinite(target)||target<=0){
+   msg.textContent='Enter a goal name and a valid target amount.';
+   msg.classList.remove('hidden');
+   return;
+ }
+
+ const {error}=await db.from('savings_goals').insert({
+   user_id:currentUser.id,
+   goal_name:name,
+   target_amount:target,
+   saved_amount:0
+ });
+
+ if(error){
+   msg.textContent=error.message;
+   msg.classList.remove('hidden');
+   return;
+ }
+
+ document.getElementById('goalName').value='';
+ document.getElementById('goalTarget').value='';
+ msg.textContent='Your savings goal has been created!';
+ msg.classList.remove('hidden');
+ await loadGoals();
+}
+
+async function logout(){
+ await db.auth.signOut();
+ currentUser=null;
+ location.reload();
+}
+
+db.auth.onAuthStateChange((event,session)=>{
+ if(session && !currentUser){
+   setTimeout(()=>loadUser(),0);
+ }
 });
-document.getElementById('goalList').innerHTML=html||'<p>No goals created yet.</p>';
-document.getElementById('homeGoals').innerHTML=goals.length?goals.map(g=>'<p>'+escapeHTML(g.name)+' — '+money(g.saved)+'</p>').join(''):'<p><small>No savings goals yet.</small></p>';
-}
-function escapeHTML(s){
-return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function resetApp(){
-if(confirm('Delete all demo savings and goals on this device?')){
-balance=0;goals=[];
-localStorage.removeItem('sae_balance');
-localStorage.removeItem('sae_goals');
-update();
-}
-}
-update();
+
+(async()=>{
+ const {data}=await db.auth.getSession();
+ if(data.session) await loadUser();
+})();
 </script>
 </body>
 </html>
